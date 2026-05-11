@@ -308,6 +308,9 @@ Devise.setup do |config|
   config.responder.error_status = :unprocessable_content
   config.responder.redirect_status = :see_other
 
+  # removes HTML redirect behavior.
+  config.navigational_formats = []
+
   # ==> Configuration for :registerable
 
   # When set to false, does not sign a user in automatically after their password is
