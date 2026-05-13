@@ -10,4 +10,5 @@ class User < ApplicationRecord
   validates :phone_number, presence: true, uniqueness: true
 
   has_one :donor_profile, dependent: :destroy
+  has_many :blood_requests, dependent: :destroy
 end
