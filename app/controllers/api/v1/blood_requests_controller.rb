@@ -19,9 +19,19 @@ class Api::V1::BloodRequestsController < ApplicationController
   end
 
   def index
-    blood_requests = BloodRequest.order(created_at: :desc)
+    pagy, blood_requests = pagy(
+      BloodRequest.order(created_at: :desc),
+      items: 10
+    )
 
-    render json: blood_requests
+    render json: {
+      blood_requests: blood_requests,
+      meta: {
+        page: pagy.page,
+        pages: pagy.pages,
+        count: pagy.count
+      }
+    }
   end
 
   def show
