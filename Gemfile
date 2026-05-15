@@ -41,7 +41,7 @@ gem "devise"
 
 gem "devise-jwt"
 
-gem "pagy", "~> 9.1"
+gem "pagy", "~> 43.5"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
