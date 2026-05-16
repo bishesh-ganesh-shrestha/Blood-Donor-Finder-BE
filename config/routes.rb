@@ -15,7 +15,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resource :donor_profile, only: [ :create, :show, :update ]
-      resources :blood_requests, only: [ :create, :index, :show ]
+      resources :blood_requests, only: [ :create, :index, :show ] do
+        member do
+          get :matching_donors
+        end
+      end
     end
   end
 end
