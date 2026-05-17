@@ -43,22 +43,13 @@ class Api::V1::BloodRequestsController < ApplicationController
   def matching_donors
     blood_request = BloodRequest.find(params[:id])
 
-    compatible_groups =
-      BloodCompatibilityService.compatible_donors(
-        blood_request.blood_group
-      )
-
-    donors = DonorProfile
-              .includes(:user)
-              .where(
-                blood_group: compatible_groups,
-                available: true
-              )
+    donors = DonorMatchingService
+              .new(blood_request)
+              .call
 
     render json: {
       blood_request: blood_request,
-      compatible_blood_groups: compatible_groups,
-      donors: donors.as_json(include: :user)
+      donors: donors
     }
   end
 
