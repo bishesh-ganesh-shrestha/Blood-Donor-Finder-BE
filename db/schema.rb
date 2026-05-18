@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_13_173028) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_162225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -34,6 +34,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_173028) do
     t.boolean "available"
     t.string "blood_group"
     t.datetime "created_at", null: false
+    t.datetime "last_active_at"
     t.datetime "last_donated_at"
     t.decimal "latitude"
     t.string "location"
