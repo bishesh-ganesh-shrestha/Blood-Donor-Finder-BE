@@ -21,7 +21,7 @@ class DonorMatchingService
     end
 
     ranked_donors.sort_by do |donor|
-      donor[:distance_km]
+      -donor[:priority_score]
     end
   end
 
@@ -35,11 +35,19 @@ class DonorMatchingService
       donor.longitude
     )
 
+    priority_score =
+      DonorPriorityService.calculate(
+        donor: donor,
+        distance: distance
+      )
+
     {
       donor_id: donor.id,
       donor_name: donor.user.name,
       blood_group: donor.blood_group,
       distance_km: distance.round(2),
+      priority_score: priority_score,
+      verified: donor.verified,
       available: donor.available
     }
   end
