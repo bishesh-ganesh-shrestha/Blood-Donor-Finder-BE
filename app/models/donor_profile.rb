@@ -1,6 +1,8 @@
 class DonorProfile < ApplicationRecord
   belongs_to :user
 
+  has_many :blood_donation_requests, dependent: :destroy
+
   BLOOD_GROUPS = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze
 
   validates :blood_group, presence: true,

@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_18_162225) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_19_174955) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "blood_donation_requests", force: :cascade do |t|
+    t.bigint "blood_request_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "donor_profile_id", null: false
+    t.text "message"
+    t.datetime "responded_at"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.index ["blood_request_id"], name: "index_blood_donation_requests_on_blood_request_id"
+    t.index ["donor_profile_id"], name: "index_blood_donation_requests_on_donor_profile_id"
+  end
 
   create_table "blood_requests", force: :cascade do |t|
     t.string "blood_group"
@@ -63,6 +75,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_162225) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "blood_donation_requests", "blood_requests"
+  add_foreign_key "blood_donation_requests", "donor_profiles"
   add_foreign_key "blood_requests", "users"
   add_foreign_key "donor_profiles", "users"
 end
