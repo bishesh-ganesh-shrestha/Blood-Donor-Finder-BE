@@ -1,0 +1,77 @@
+class Api::V1::BloodDonationRequestsController < ApplicationController
+  before_action :authenticate_user!
+
+  def create
+    donation_request =
+      BloodDonationRequest.new(
+        blood_donation_request_params
+      )
+
+    if donation_request.save
+      render json: {
+        message: "Blood donation request sent",
+        donation_request: donation_request
+      }, status: :created
+    else
+      render json: {
+        errors: donation_request.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    donation_request =
+      BloodDonationRequest.find(params[:id])
+
+    if donation_request.update(update_params)
+      render json: {
+        message: "Request updated",
+        donation_request: donation_request
+      }
+    else
+      render json: {
+        errors: donation_request.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def index
+    requests =
+      current_user
+        .donor_profile
+        &.blood_donation_requests
+        &.includes(:blood_request)
+
+    pagy, requests = pagy(
+      requests.order(created_at: :desc),
+      items: 10
+    )
+
+    render json: {
+      requests: requests.as_json(
+        include: :blood_request
+      ),
+      meta: {
+        page: pagy.page,
+        pages: pagy.pages,
+        count: pagy.count
+      }
+    }
+  end
+
+  private
+
+  def blood_donation_request_params
+    params.require(:blood_donation_request).permit(
+      :blood_request_id,
+      :donor_profile_id,
+      :message
+    )
+  end
+
+  def update_params
+    params.require(:blood_donation_request).permit(
+      :status
+    )
+  end
+end

@@ -20,6 +20,8 @@ Rails.application.routes.draw do
           get :matching_donors
         end
       end
+
+      resources :blood_donation_requests, only: [ :create, :update, :index ]
     end
   end
 end
