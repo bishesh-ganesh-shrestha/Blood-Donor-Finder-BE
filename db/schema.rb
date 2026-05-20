@@ -10,17 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_19_174955) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_20_181259) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "blood_donation_requests", force: :cascade do |t|
     t.bigint "blood_request_id", null: false
     t.datetime "created_at", null: false
+    t.decimal "donor_latitude"
+    t.decimal "donor_longitude"
     t.bigint "donor_profile_id", null: false
     t.text "message"
     t.datetime "responded_at"
     t.string "status"
+    t.boolean "tracking_enabled"
     t.datetime "updated_at", null: false
     t.index ["blood_request_id"], name: "index_blood_donation_requests_on_blood_request_id"
     t.index ["donor_profile_id"], name: "index_blood_donation_requests_on_donor_profile_id"
