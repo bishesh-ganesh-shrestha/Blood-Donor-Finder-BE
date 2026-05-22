@@ -21,7 +21,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :blood_donation_requests, only: [ :create, :update, :index ]
+      resources :blood_donation_requests, only: [ :create, :update, :index ] do
+        member do
+          patch :update_location
+        end
+      end
     end
   end
 end

@@ -59,6 +59,27 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
     }
   end
 
+  def update_location
+    donation_request =
+      BloodDonationRequest.find(params[:id])
+
+    unless donation_request.donor_profile.user == current_user
+      return render json: {
+        error: "Unauthorized"
+      }, status: :unauthorized
+    end
+
+    DonorTrackingService.broadcast_location(
+      donation_request,
+      params[:latitude],
+      params[:longitude]
+    )
+
+    render json: {
+      message: "Location updated"
+    }
+  end
+
   private
 
   def blood_donation_request_params
