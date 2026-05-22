@@ -11,4 +11,5 @@ class User < ApplicationRecord
 
   has_one :donor_profile, dependent: :destroy
   has_many :blood_requests, dependent: :destroy
+  has_many :blood_donation_requests, through: :donor_profile
 end
