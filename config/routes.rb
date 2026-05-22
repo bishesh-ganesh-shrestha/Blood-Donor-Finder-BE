@@ -19,6 +19,10 @@ Rails.application.routes.draw do
         member do
           get :matching_donors
         end
+
+        collection do
+          get :my_requests
+        end
       end
 
       resources :blood_donation_requests, only: [ :create, :update, :index ] do

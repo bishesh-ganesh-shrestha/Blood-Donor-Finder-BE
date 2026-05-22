@@ -40,6 +40,22 @@ class Api::V1::BloodRequestsController < ApplicationController
     render json: blood_request
   end
 
+  def my_requests
+    pagy, blood_requests = pagy(
+      current_user.blood_requests.order(created_at: :desc),
+      items: 10
+    )
+
+    render json: {
+      blood_requests: blood_requests,
+      meta: {
+        page: pagy.page,
+        pages: pagy.pages,
+        count: pagy.count
+      }
+    }
+  end
+
   def matching_donors
     blood_request = BloodRequest.find(params[:id])
 
