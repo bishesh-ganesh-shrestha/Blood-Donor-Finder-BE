@@ -7,7 +7,7 @@ class BloodRequest < ApplicationRecord
 
   URGENCY_LEVELS = %w[normal urgent critical].freeze
 
-  STATUSES = %w[open fulfilled cancelled].freeze
+  STATUSES = %w[open matched accepted in_progress fulfilled cancelled].freeze
 
   validates :blood_group,
             presence: true,
