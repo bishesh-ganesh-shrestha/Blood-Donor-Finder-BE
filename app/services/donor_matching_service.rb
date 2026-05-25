@@ -44,6 +44,7 @@ class DonorMatchingService
     {
       donor_id: donor.id,
       donor_name: donor.user.name,
+      donor_phone_number: donor.user.phone_number,
       blood_group: donor.blood_group,
       distance_km: distance.round(2),
       priority_score: priority_score,
