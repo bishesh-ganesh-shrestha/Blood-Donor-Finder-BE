@@ -8,7 +8,7 @@ class Users::SessionsController < Devise::SessionsController
   def respond_with(resource, _opts = {})
     render json: {
       message: "Logged in successfully",
-      user: resource,
+      user: resource.as_json.merge(is_donor: resource.is_donor?),
       token: request.env["warden-jwt_auth.token"]
     }, status: :ok
   end
