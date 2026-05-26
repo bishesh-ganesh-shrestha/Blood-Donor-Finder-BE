@@ -45,7 +45,7 @@ gem "pagy", "~> 9.1"
 
 gem "pusher"
 
-gem "avo"
+gem "avo", ">= 3.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -60,3 +60,4 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
+gem "avo", ">= 3.2"
