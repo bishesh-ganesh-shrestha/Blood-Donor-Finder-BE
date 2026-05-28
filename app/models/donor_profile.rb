@@ -9,6 +9,7 @@ class DonorProfile < ApplicationRecord
                            inclusion: { in: BLOOD_GROUPS }
 
   validates :latitude, :longitude, presence: true
+  validates :user_id, uniqueness: true
 
   validate :eligible_for_donation
 
