@@ -11,7 +11,6 @@ class Avo::Resources::User < Avo::BaseResource
     field :name, as: :text
     field :phone_number, as: :text
     field :is_admin, as: :boolean
-    field :jti, as: :text
     field :donor_profile, as: :has_one
     field :blood_requests, as: :has_many
     field :blood_donation_requests, as: :has_one
