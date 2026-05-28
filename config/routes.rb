@@ -34,3 +34,10 @@ Rails.application.routes.draw do
     end
   end
 end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    # This route is not protected, secure it with authentication if needed.
+    get "dashboard", to: "tools#dashboard", as: :dashboard
+  end
+end

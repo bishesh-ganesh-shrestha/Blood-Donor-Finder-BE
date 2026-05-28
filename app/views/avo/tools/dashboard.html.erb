@@ -1,0 +1,103 @@
+<%# app/views/avo/tools/dashboard.html.erb %>
+<div class="flex flex-col">
+  <%= render Avo::PanelComponent.new(name: "Dashboard", display_breadcrumbs: true) do |c| %>
+    <% c.with_body do %>
+      <div class="p-6 space-y-8">
+
+        <%# ====== STAT CARDS ====== %>
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Overview</h2>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <%= render "avo/tools/stat_card", label: "Total Users",       value: @total_users,        color: "blue"   %>
+            <%= render "avo/tools/stat_card", label: "Total Donors",      value: @total_donors,       color: "red"    %>
+            <%= render "avo/tools/stat_card", label: "Available Donors",  value: @available_donors,   color: "green"  %>
+            <%= render "avo/tools/stat_card", label: "Verified Donors",   value: @verified_donors,    color: "teal"   %>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Blood Requests</h2>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <%= render "avo/tools/stat_card", label: "Total Requests",      value: @total_requests,     color: "purple" %>
+            <%= render "avo/tools/stat_card", label: "Pending",             value: @pending_requests,   color: "yellow" %>
+            <%= render "avo/tools/stat_card", label: "Fulfilled",           value: @fulfilled_requests, color: "green"  %>
+            <%= render "avo/tools/stat_card", label: "Donor Responses",     value: @total_responses,    color: "orange" %>
+          </div>
+        </div>
+
+        <%# ====== CHARTS ROW 1 ====== %>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Blood Requests — Last 6 Months</h3>
+            <%= area_chart @requests_over_time,
+                  colors: ["#ef4444"],
+                  curve: false,
+                  points: false,
+                  height: "220px" %>
+          </div>
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">New Donors — Last 6 Months</h3>
+            <%= area_chart @new_donors_over_time,
+                  colors: ["#3b82f6"],
+                  curve: false,
+                  points: false,
+                  height: "220px" %>
+          </div>
+
+        </div>
+
+        <%# ====== CHARTS ROW 2 ====== %>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests by Blood Group</h3>
+            <%= bar_chart @requests_by_blood_group,
+                  colors: ["#ef4444"],
+                  height: "220px" %>
+          </div>
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Donors by Blood Group</h3>
+            <%= bar_chart @donors_by_blood_group,
+                  colors: ["#3b82f6"],
+                  height: "220px" %>
+          </div>
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests by Urgency</h3>
+            <%= pie_chart @requests_by_urgency,
+                  colors: ["#ef4444", "#f59e0b", "#3b82f6"],
+                  height: "220px" %>
+          </div>
+
+        </div>
+
+        <%# ====== CHARTS ROW 3 ====== %>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Donation Responses by Status</h3>
+            <%= pie_chart @responses_by_status,
+                  donut: true,
+                  height: "220px" %>
+          </div>
+
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests vs Responses (6 months)</h3>
+            <%= line_chart [
+                  { name: "Requests", data: @requests_over_time },
+                  { name: "Responses", data: BloodDonationRequest.group_by_month(:created_at, last: 6).count }
+                ],
+                colors: ["#ef4444", "#3b82f6"],
+                curve: false,
+                height: "220px" %>
+          </div>
+
+        </div>
+
+      </div>
+    <% end %>
+  <% end %>
+</div>
