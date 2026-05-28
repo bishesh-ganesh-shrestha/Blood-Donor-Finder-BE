@@ -4,97 +4,272 @@
     <% c.with_body do %>
       <div class="p-6 space-y-8">
 
+        <%# ====== FILTER BAR ====== %>
+        <%= form_with url: request.path, method: :get, data: { turbo: false }, class: "bg-gray-50 border border-gray-200 rounded-xl p-4" do |f| %>
+          <div class="flex flex-wrap gap-3 items-end">
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">Date Range</label>
+              <%= f.select :date_range,
+                    options_for_select([
+                      ["Today",          "today"],
+                      ["This Week",      "this_week"],
+                      ["This Month",     "this_month"],
+                      ["Last 3 Months",  "last_3_months"],
+                      ["Last 6 Months",  "last_6_months"],
+                      ["This Year",      "this_year"],
+                      ["All Time",       "all"]
+                    ], @date_range),
+                    {},
+                    class: "text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-red-400 outline-none",
+                    onchange: "this.form.submit()" %>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">Blood Group</label>
+              <%= f.select :blood_group,
+                    options_for_select([["All Groups", ""]] + @blood_groups.map { |g| [g, g] }, @blood_group),
+                    {},
+                    class: "text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-red-400 outline-none",
+                    onchange: "this.form.submit()" %>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">Urgency</label>
+              <%= f.select :urgency,
+                    options_for_select([["All Urgencies", ""]] + @urgencies.map { |u| [u.capitalize, u] }, @urgency),
+                    {},
+                    class: "text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-red-400 outline-none",
+                    onchange: "this.form.submit()" %>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">Status</label>
+              <%= f.select :status,
+                    options_for_select([["All Statuses", ""]] + @statuses.map { |s| [s.capitalize, s] }, @status),
+                    {},
+                    class: "text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-red-400 outline-none",
+                    onchange: "this.form.submit()" %>
+            </div>
+
+            <div class="flex flex-col gap-1 flex-1 min-w-[200px]">
+              <label class="text-xs font-medium text-gray-500">Search Requests</label>
+              <div class="flex gap-2">
+                <%= f.text_field :search,
+                      value: @search,
+                      placeholder: "Patient, hospital, blood group...",
+                      class: "flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-red-400 outline-none" %>
+                <%= f.submit "Search", class: "text-sm bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 cursor-pointer font-medium" %>
+              </div>
+            </div>
+
+            <% if @blood_group.present? || @urgency.present? || @status.present? || @search.present? || @date_range != "this_month" %>
+              <%= link_to "✕ Clear", request.path,
+                    class: "text-sm text-gray-400 hover:text-red-500 underline self-end pb-2" %>
+            <% end %>
+
+          </div>
+        <% end %>
+
+        <%# ====== QUICK ACTIONS ====== %>
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Quick Actions</h2>
+          <div class="flex flex-wrap gap-3">
+            <%= link_to "/avo/export_requests",
+                  class: "flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm" do %>
+              📥 Export Requests CSV
+            <% end %>
+            <%= link_to "/admin/resources/donor_profiles",
+                  class: "flex items-center gap-2 bg-white border border-blue-200 rounded-lg px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 shadow-sm" do %>
+              👤 Manage Donors (<%= @available_donors %> available)
+            <% end %>
+            <%= link_to "/admin/resources/users",
+                  class: "flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 shadow-sm" do %>
+              👥 All Users (<%= @total_users %>)
+            <% end %>
+          </div>
+        </div>
+
         <%# ====== STAT CARDS ====== %>
         <div>
-          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Overview</h2>
-          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <%= render "avo/tools/stat_card", label: "Total Users",       value: @total_users,        color: "blue"   %>
-            <%= render "avo/tools/stat_card", label: "Total Donors",      value: @total_donors,       color: "red"    %>
-            <%= render "avo/tools/stat_card", label: "Available Donors",  value: @available_donors,   color: "green"  %>
-            <%= render "avo/tools/stat_card", label: "Verified Donors",   value: @verified_donors,    color: "teal"   %>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Platform Overview</h2>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-5">
+            <%= render "avo/tools/stat_card", label: "Total Users",       value: @total_users,        color: "blue",   icon: "👥" %>
+            <%= render "avo/tools/stat_card", label: "Total Donors",      value: @total_donors,       color: "red",    icon: "🩸" %>
+            <%= render "avo/tools/stat_card", label: "Available Donors",  value: @available_donors,   color: "green",  icon: "✅" %>
+            <%= render "avo/tools/stat_card", label: "Verified Donors",   value: @verified_donors,    color: "teal",   icon: "🏅" %>
+            <%= render "avo/tools/stat_card", label: "Fulfillment Rate",  value: "#{@fulfillment_rate}%", color: "purple", icon: "📊" %>
           </div>
         </div>
 
         <div>
-          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Blood Requests</h2>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+            Blood Requests
+            <% if @date_range.present? %>
+              <span class="text-gray-300 normal-case font-normal ml-1">— filtered</span>
+            <% end %>
+          </h2>
           <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <%= render "avo/tools/stat_card", label: "Total Requests",      value: @total_requests,     color: "purple" %>
-            <%= render "avo/tools/stat_card", label: "Pending",             value: @pending_requests,   color: "yellow" %>
-            <%= render "avo/tools/stat_card", label: "Fulfilled",           value: @fulfilled_requests, color: "green"  %>
-            <%= render "avo/tools/stat_card", label: "Donor Responses",     value: @total_responses,    color: "orange" %>
+            <%= render "avo/tools/stat_card", label: "Total Requests",   value: @total_requests,     color: "purple", icon: "📋" %>
+            <%= render "avo/tools/stat_card", label: "Fulfilled",        value: @fulfilled_requests, color: "green",  icon: "✅" %>
+            <%= render "avo/tools/stat_card", label: "Donor Responses",  value: @total_responses,    color: "orange", icon: "💬" %>
           </div>
         </div>
 
         <%# ====== CHARTS ROW 1 ====== %>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h3 class="text-sm font-semibold text-gray-600 mb-4">Blood Requests — Last 6 Months</h3>
-            <%= area_chart @requests_over_time,
-                  colors: ["#ef4444"],
-                  curve: false,
-                  points: false,
-                  height: "220px" %>
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests vs Responses Over Time</h3>
+            <%= line_chart @requests_vs_responses, colors: ["#ef4444", "#3b82f6"], curve: false, points: false, height: "220px" %>
           </div>
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h3 class="text-sm font-semibold text-gray-600 mb-4">New Donors — Last 6 Months</h3>
-            <%= area_chart @new_donors_over_time,
-                  colors: ["#3b82f6"],
-                  curve: false,
-                  points: false,
-                  height: "220px" %>
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">New Donors Over Time</h3>
+            <%= area_chart @new_donors_over_time, colors: ["#3b82f6"], curve: false, points: false, height: "220px" %>
           </div>
-
         </div>
 
         <%# ====== CHARTS ROW 2 ====== %>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests by Blood Group</h3>
-            <%= bar_chart @requests_by_blood_group,
-                  colors: ["#ef4444"],
-                  height: "220px" %>
+            <%= bar_chart @requests_by_blood_group, colors: ["#ef4444"], height: "220px" %>
           </div>
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h3 class="text-sm font-semibold text-gray-600 mb-4">Donors by Blood Group</h3>
-            <%= bar_chart @donors_by_blood_group,
-                  colors: ["#3b82f6"],
-                  height: "220px" %>
+            <%= bar_chart @donors_by_blood_group, colors: ["#3b82f6"], height: "220px" %>
           </div>
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests by Urgency</h3>
-            <%= pie_chart @requests_by_urgency,
-                  colors: ["#ef4444", "#f59e0b", "#3b82f6"],
-                  height: "220px" %>
+            <%= pie_chart @requests_by_urgency, colors: ["#ef4444", "#f59e0b", "#3b82f6"], height: "220px" %>
           </div>
-
         </div>
 
         <%# ====== CHARTS ROW 3 ====== %>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h3 class="text-sm font-semibold text-gray-600 mb-4">Donation Responses by Status</h3>
-            <%= pie_chart @responses_by_status,
-                  donut: true,
-                  height: "220px" %>
+            <%= pie_chart @responses_by_status, donut: true, height: "220px" %>
           </div>
-
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <h3 class="text-sm font-semibold text-gray-600 mb-4">Requests vs Responses (6 months)</h3>
-            <%= line_chart [
-                  { name: "Requests", data: @requests_over_time },
-                  { name: "Responses", data: BloodDonationRequest.group_by_month(:created_at, last: 6).count }
-                ],
-                colors: ["#ef4444", "#3b82f6"],
-                curve: false,
-                height: "220px" %>
+            <h3 class="text-sm font-semibold text-gray-600 mb-4">Blood Requests Over Time</h3>
+            <%= area_chart @requests_over_time, colors: ["#ef4444"], curve: false, points: false, height: "220px" %>
           </div>
+        </div>
 
+        <%# ====== RECENT REQUESTS TABLE ====== %>
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+            Recent Blood Requests
+            <% if @search.present? %>
+              <span class="normal-case font-normal text-gray-400">— results for "<%= @search %>"</span>
+            <% end %>
+          </h2>
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Patient</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Hospital</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Blood</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Units</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Urgency</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                <% if @recent_requests.any? %>
+                  <% @recent_requests.each do |req| %>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="px-4 py-3 font-medium text-gray-800"><%= req.patient_name %></td>
+                      <td class="px-4 py-3 text-gray-600"><%= req.hospital_name %></td>
+                      <td class="px-4 py-3">
+                        <span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                          <%= req.blood_group %>
+                        </span>
+                      </td>
+                      <td class="px-4 py-3 text-gray-600"><%= req.units_required %></td>
+                      <td class="px-4 py-3">
+                        <% urgency_color = { "critical" => "red", "high" => "orange", "medium" => "yellow", "low" => "green" }[req.urgency&.downcase] || "gray" %>
+                        <span class="inline-block bg-<%= urgency_color %>-100 text-<%= urgency_color %>-700 text-xs font-medium px-2 py-0.5 rounded-full capitalize">
+                          <%= req.urgency %>
+                        </span>
+                      </td>
+                      <td class="px-4 py-3">
+                        <% status_color = { "fulfilled" => "green", "open" => "yellow", "cancelled" => "red" }[req.status&.downcase] || "gray" %>
+                        <span class="inline-block bg-<%= status_color %>-100 text-<%= status_color %>-700 text-xs font-medium px-2 py-0.5 rounded-full capitalize">
+                          <%= req.status %>
+                        </span>
+                      </td>
+                      <td class="px-4 py-3 text-gray-400 text-xs"><%= req.created_at.strftime("%b %d, %Y") %></td>
+                      <td class="px-4 py-3">
+                        <%= link_to "View →", "/avo/blood-requests/#{req.id}",
+                              class: "text-xs text-blue-500 hover:text-blue-700 font-medium" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="8" class="px-4 py-10 text-center text-gray-400 text-sm">
+                      No requests found<% if @search.present? %> for "<%= @search %>"<% end %>.
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <%# ====== TOP DONORS TABLE ====== %>
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Top Donors by Responses</h2>
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">#</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Donor</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Blood Group</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Location</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Responses</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                  <th class="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                <% @top_donors.each_with_index do |donor, i| %>
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-gray-400 font-medium"><%= i + 1 %></td>
+                    <td class="px-4 py-3">
+                      <div class="font-medium text-gray-800"><%= donor.user_name %></div>
+                      <div class="text-xs text-gray-400"><%= donor.user_email %></div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                        <%= donor.blood_group %>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-500 text-xs"><%= donor.location.presence || "—" %></td>
+                    <td class="px-4 py-3">
+                      <span class="font-bold text-gray-800"><%= donor.response_count %></span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <% if donor.available? %>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full">Available</span>
+                      <% else %>
+                        <span class="inline-block bg-gray-100 text-gray-500 text-xs font-medium px-2 py-0.5 rounded-full">Unavailable</span>
+                      <% end %>
+                    </td>
+                    <td class="px-4 py-3">
+                      <%= link_to "View →", "/avo/donor-profiles/#{donor.id}",
+                            class: "text-xs text-blue-500 hover:text-blue-700 font-medium" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>

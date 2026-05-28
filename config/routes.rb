@@ -10,6 +10,11 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
+  scope :avo do
+    get  "dashboard",        to: "avo/tools#dashboard",        as: :avo_dashboard
+    get  "export_requests",  to: "avo/tools#export_requests",  as: :avo_export_requests
+  end
+
 
   # Defines the root path route ("/")
   # root "posts#index"
