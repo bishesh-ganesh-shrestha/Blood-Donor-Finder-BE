@@ -45,9 +45,11 @@ gem "pagy", "~> 9.1"
 
 gem "pusher"
 
-gem "avo", ">= 3.2"
+gem "avo"
 
 gem "chartkick"
+
+gem "groupdate"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
