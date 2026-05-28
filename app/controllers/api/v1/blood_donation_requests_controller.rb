@@ -21,18 +21,34 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
 
   def update
     donation_request =
-      BloodDonationRequest.find(params[:id])
+      current_user
+        .donor_profile
+        .blood_donation_requests
+        .find(params[:id])
 
-    if donation_request.update(update_params)
+    if update_params[:status] == "accepted"
+      BloodDonationRequests::AcceptService
+        .new(donation_request)
+        .call
+
+      render json: {
+        message: "Donation request accepted",
+        donation_request: donation_request.reload
+      }, status: :ok
+    elsif donation_request.update(update_params)
       render json: {
         message: "Request updated",
         donation_request: donation_request
-      }
+      }, status: :ok
     else
       render json: {
         errors: donation_request.errors.full_messages
       }, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    render json: {
+      error: e.message
+    }, status: :unprocessable_entity
   end
 
   def index
