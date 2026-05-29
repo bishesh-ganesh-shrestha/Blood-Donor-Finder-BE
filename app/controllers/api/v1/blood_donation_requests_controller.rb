@@ -87,8 +87,8 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
 
     DonorTrackingService.broadcast_location(
       donation_request,
-      params[:latitude],
-      params[:longitude]
+      params[:donor_latitude],
+      params[:donor_longitude]
     )
 
     render json: {
