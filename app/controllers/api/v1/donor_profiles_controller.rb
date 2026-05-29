@@ -22,6 +22,44 @@ class Api::V1::DonorProfilesController < ApplicationController
     end
   end
 
+  def index
+    pagy, donors = pagy(
+      DonorProfile
+        .includes(:user)
+        .order(created_at: :desc),
+      items: 10
+    )
+
+    render json: {
+      donors: donors.as_json(
+        only: [
+          :id,
+          :blood_group,
+          :available,
+          :latitude,
+          :longitude,
+          :last_donated_at,
+          :verified
+        ],
+        include: {
+          user: {
+            only: [
+              :id,
+              :name,
+              :email,
+              :phone_number
+            ]
+          }
+        }
+      ),
+      meta: {
+        page: pagy.page,
+        pages: pagy.pages,
+        count: pagy.count
+      }
+    }
+  end
+
   def show
     donor_profile = current_user.donor_profile
 
