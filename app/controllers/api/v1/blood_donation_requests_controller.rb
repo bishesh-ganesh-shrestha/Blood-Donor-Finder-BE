@@ -96,6 +96,22 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
     }
   end
 
+  def show
+    donation_request = BloodDonationRequest.find(params[:id])
+
+    unless donation_request.donor_profile.user == current_user
+      return render json: {
+        error: "Unauthorized"
+      }, status: :unauthorized
+    end
+
+    render json: {
+      donation_request: donation_request,
+      blood_request: donation_request.blood_request,
+      donor_profile: donation_request.donor_profile
+    }, status: :ok
+  end
+
   private
 
   def blood_donation_request_params

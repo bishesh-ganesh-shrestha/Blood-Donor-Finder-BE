@@ -32,7 +32,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :blood_donation_requests, only: [ :create, :update, :index ] do
+      resources :blood_donation_requests, only: [ :create, :update, :index, :show ] do
         member do
           patch :update_location
         end
