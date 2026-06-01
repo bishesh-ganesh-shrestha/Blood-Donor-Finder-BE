@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_20_181259) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_175532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,6 +60,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_181259) do
     t.index ["user_id"], name: "index_donor_profiles_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "message"
+    t.bigint "notifiable_id", null: false
+    t.string "notifiable_type", null: false
+    t.datetime "read_at"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -82,4 +95,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_181259) do
   add_foreign_key "blood_donation_requests", "donor_profiles"
   add_foreign_key "blood_requests", "users"
   add_foreign_key "donor_profiles", "users"
+  add_foreign_key "notifications", "users"
 end
