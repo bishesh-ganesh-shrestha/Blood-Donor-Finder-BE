@@ -1,6 +1,7 @@
 class BloodDonationRequest < ApplicationRecord
   belongs_to :blood_request
   belongs_to :donor_profile
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   STATUSES = %w[
     pending

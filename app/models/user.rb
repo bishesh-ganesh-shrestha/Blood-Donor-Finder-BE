@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_one :donor_profile, dependent: :destroy
   has_many :blood_requests, dependent: :destroy
   has_many :blood_donation_requests, through: :donor_profile
+  has_many :notifications, dependent: :destroy
 
   def is_donor?
     donor_profile.present?

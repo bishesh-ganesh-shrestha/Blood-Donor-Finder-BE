@@ -2,6 +2,7 @@ class BloodRequest < ApplicationRecord
   belongs_to :user
 
   has_many :blood_donation_requests, dependent: :destroy
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   BLOOD_GROUPS = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze
 
