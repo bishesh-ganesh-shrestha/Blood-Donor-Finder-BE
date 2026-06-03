@@ -37,6 +37,15 @@ Rails.application.routes.draw do
           patch :update_location
         end
       end
+
+      resources :notifications, only: [ :index ] do
+        member do
+          patch :mark_as_read
+        end
+        collection do
+          patch :read_all
+        end
+      end
     end
   end
 end
