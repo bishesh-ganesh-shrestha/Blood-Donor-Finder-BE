@@ -19,6 +19,8 @@ module BloodDonationRequests
         cancel_other_requests!(blood_request)
 
         update_blood_request!(blood_request)
+
+        notify_blood_requester
       end
 
       blood_donation_request
@@ -50,6 +52,15 @@ module BloodDonationRequests
     def update_blood_request!(blood_request)
       blood_request.update!(
         status: "matched"
+      )
+    end
+
+    def notify_blood_requester
+      Notifications::CreateService.call(
+        user: blood_donation_request.blood_request.user,
+        title: "Blood Donor Matched",
+        message: "Your blood request has been accepted by #{blood_donation_request.donor_profile.user.name}.",
+        notifiable: blood_donation_request.blood_request
       )
     end
   end

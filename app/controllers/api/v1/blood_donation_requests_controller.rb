@@ -8,6 +8,13 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
       )
 
     if donation_request.save
+      Notifications::CreateService.call(
+        user: donation_request.donor_profile.user,
+        title: "New Blood Request",
+        message: "You have received a new blood donation request.",
+        notifiable: donation_request
+      )
+
       render json: {
         message: "Blood donation request sent",
         donation_request: donation_request
