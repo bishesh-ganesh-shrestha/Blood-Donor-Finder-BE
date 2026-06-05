@@ -1,6 +1,6 @@
 # app/controllers/notifications_controller.rb
 
-class NotificationsController < ApplicationController
+class Api::V1::NotificationsController < ApplicationController
   def index
     pagy, notifications = pagy(
       current_user.notifications.order(created_at: :desc),
