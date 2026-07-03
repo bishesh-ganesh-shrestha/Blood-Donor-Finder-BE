@@ -41,7 +41,7 @@ gem "devise"
 
 gem "devise-jwt"
 
-gem "pagy", "~> 9.1"
+gem "pagy", "~> 43.5"
 
 gem "pusher"
 
