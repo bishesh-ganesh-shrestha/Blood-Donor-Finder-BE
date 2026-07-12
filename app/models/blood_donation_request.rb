@@ -6,6 +6,7 @@ class BloodDonationRequest < ApplicationRecord
   STATUSES = %w[
     pending
     accepted
+    completed
     declined
     cancelled
   ].freeze
