@@ -119,6 +119,29 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
     }, status: :ok
   end
 
+  def complete
+    donation_request = BloodDonationRequest.find(params[:id])
+
+    unless donation_request.blood_request.user == current_user
+      return render json: {
+        error: "You are not authorized to complete this donation."
+      }, status: :forbidden
+    end
+
+    BloodDonationRequests::CompleteService
+      .new(donation_request)
+      .call
+
+    render json: {
+      message: "Blood donation marked as completed.",
+      donation_request: donation_request.reload
+    }
+  rescue StandardError => e
+    render json: {
+      error: e.message
+    }, status: :unprocessable_entity
+  end
+
   private
 
   def blood_donation_request_params
