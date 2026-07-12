@@ -14,9 +14,9 @@ module BloodDonationRequests
       blood_request.with_lock do
         validate_request_status!(blood_request)
 
-        accept_current_request!
+        validate_donation_request!
 
-        cancel_other_requests!(blood_request)
+        accept_current_request!
 
         update_blood_request!(blood_request)
 
@@ -29,9 +29,16 @@ module BloodDonationRequests
     private
 
     def validate_request_status!(blood_request)
-      unless blood_request.status == "open"
+      unless %w[open matched].include?(blood_request.status)
         raise StandardError,
               "Blood request is no longer accepting donors"
+      end
+    end
+
+    def validate_donation_request!
+      unless blood_donation_request.status == "pending"
+        raise StandardError,
+              "Donation request has already been processed"
       end
     end
 
@@ -41,15 +48,9 @@ module BloodDonationRequests
       )
     end
 
-    def cancel_other_requests!(blood_request)
-      blood_request
-        .blood_donation_requests
-        .where.not(id: blood_donation_request.id)
-        .where(status: "pending")
-        .update_all(status: "cancelled")
-    end
-
     def update_blood_request!(blood_request)
+      return unless blood_request.status == "open"
+
       blood_request.update!(
         status: "matched"
       )
