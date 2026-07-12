@@ -20,7 +20,7 @@ class Api::V1::BloodRequestsController < ApplicationController
 
   def index
     pagy, blood_requests = pagy(
-      BloodRequest.order(created_at: :desc),
+      BloodRequest.where.not(status: "fulfilled").order(created_at: :desc),
       items: 10
     )
 
