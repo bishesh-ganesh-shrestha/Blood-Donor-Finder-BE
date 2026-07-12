@@ -46,6 +46,11 @@ Rails.application.routes.draw do
           patch :read_all
         end
       end
+
+      resource :user, only: [] do
+        patch :push_token
+        get :me
+      end
     end
   end
 end
