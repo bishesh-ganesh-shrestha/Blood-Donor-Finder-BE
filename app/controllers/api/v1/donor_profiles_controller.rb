@@ -35,7 +35,6 @@ class Api::V1::DonorProfilesController < ApplicationController
         only: [
           :id,
           :blood_group,
-          :available,
           :latitude,
           :longitude,
           :last_donated_at,
@@ -97,7 +96,6 @@ class Api::V1::DonorProfilesController < ApplicationController
       :latitude,
       :longitude,
       :last_donated_at,
-      :available
     )
   end
 

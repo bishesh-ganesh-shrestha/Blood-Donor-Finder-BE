@@ -13,7 +13,6 @@ class Avo::Resources::DonorProfile < Avo::BaseResource
     field :latitude, as: :number
     field :longitude, as: :number
     field :last_donated_at, as: :date_time
-    field :available, as: :boolean
     field :verified, as: :boolean
     field :last_active_at, as: :date_time
     field :user, as: :belongs_to
