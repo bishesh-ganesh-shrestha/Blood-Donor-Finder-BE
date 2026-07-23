@@ -14,7 +14,8 @@ class Api::V1::UsersController < ApplicationController
   def me
     render json: {
       user: current_user,
-      is_donor: current_user.donor_profile.present?
+      is_donor: current_user.donor_profile.present?,
+      donor_profile: current_user.donor_profile
     }
   end
 end
