@@ -25,7 +25,7 @@ class DonorProfile < ApplicationRecord
   def eligible_for_donation
     return if last_donated_at.blank?
 
-    if last_donated_at > 3.months.ago
+    if last_donated_at > DONATION_GAP.ago
       errors.add(
         :last_donated_at,
         "Donor is not yet eligible to donate again"
