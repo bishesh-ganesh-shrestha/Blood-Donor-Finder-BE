@@ -122,7 +122,7 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
   def complete
     donation_request = BloodDonationRequest.find(params[:id])
 
-    unless donation_request.blood_request.user == current_user
+    unless donation_request&.donor_profile&.user == current_user
       return render json: {
         error: "You are not authorized to complete this donation."
       }, status: :forbidden
