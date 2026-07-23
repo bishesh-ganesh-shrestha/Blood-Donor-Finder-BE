@@ -15,7 +15,7 @@ class Api::V1::UsersController < ApplicationController
     render json: {
       user: current_user,
       is_donor: current_user.donor_profile.present?,
-      donor_profile: current_user.donor_profile
+      donor_profile: current_user.donor_profile.as_json(methods: [ :available ])
     }
   end
 end

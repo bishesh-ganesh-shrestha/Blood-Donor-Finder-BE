@@ -20,6 +20,10 @@ class DonorProfile < ApplicationRecord
     last_donated_at <= DONATION_GAP.ago
   end
 
+  def available
+    available?
+  end
+
   private
 
   def eligible_for_donation
