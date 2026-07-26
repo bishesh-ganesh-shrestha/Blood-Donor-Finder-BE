@@ -24,9 +24,7 @@ class Api::V1::DonorProfilesController < ApplicationController
 
   def index
     pagy, donors = pagy(
-      DonorProfile
-        .includes(:user)
-        .order(created_at: :desc),
+      DonorProfiles::SearchService.new(params).call,
       items: 10
     )
 

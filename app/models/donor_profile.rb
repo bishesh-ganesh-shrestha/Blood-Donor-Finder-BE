@@ -14,6 +14,20 @@ class DonorProfile < ApplicationRecord
 
   validate :eligible_for_donation
 
+  scope :available, -> {
+    where(
+      "last_donated_at IS NULL OR last_donated_at <= ?",
+      DONATION_GAP.ago
+    )
+  }
+
+  scope :unavailable, -> {
+    where(
+      "last_donated_at > ?",
+      DONATION_GAP.ago
+    )
+  }
+
   def available?
     return true if last_donated_at.blank?
 
