@@ -4,7 +4,7 @@ class Api::V1::NotificationsController < ApplicationController
   def index
     pagy, notifications = pagy(
       current_user.notifications.order(created_at: :desc),
-      items: 10
+      limit: 10
     )
 
     render json: {

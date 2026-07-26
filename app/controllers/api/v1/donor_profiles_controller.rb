@@ -25,7 +25,7 @@ class Api::V1::DonorProfilesController < ApplicationController
   def index
     pagy, donors = pagy(
       DonorProfiles::SearchService.new(params).call,
-      items: 10
+      limit: 10
     )
 
     render json: {

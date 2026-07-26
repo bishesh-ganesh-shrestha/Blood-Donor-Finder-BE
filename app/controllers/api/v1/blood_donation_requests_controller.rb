@@ -67,7 +67,7 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
 
     pagy, requests = pagy(
       requests.order(created_at: :desc),
-      items: 10
+      limit: 10
     )
 
     render json: {

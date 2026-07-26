@@ -21,7 +21,7 @@ class Api::V1::BloodRequestsController < ApplicationController
   def index
     pagy, blood_requests = pagy(
       BloodRequest.where.not(status: "fulfilled").order(created_at: :desc),
-      items: 10
+      limit: 10
     )
 
     render json: {
@@ -43,7 +43,7 @@ class Api::V1::BloodRequestsController < ApplicationController
   def my_requests
     pagy, blood_requests = pagy(
       current_user.blood_requests.order(created_at: :desc),
-      items: 10
+      limit: 10
     )
 
     render json: {
