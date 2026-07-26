@@ -29,27 +29,7 @@ class Api::V1::DonorProfilesController < ApplicationController
     )
 
     render json: {
-      donors: donors.as_json(
-        only: [
-          :id,
-          :blood_group,
-          :latitude,
-          :longitude,
-          :last_donated_at,
-          :verified
-        ],
-        methods: [ :available ],
-        include: {
-          user: {
-            only: [
-              :id,
-              :name,
-              :email,
-              :phone_number
-            ]
-          }
-        }
-      ),
+      donors: donor_profile_json(donors),
       meta: {
         page: pagy.page,
         pages: pagy.pages,
