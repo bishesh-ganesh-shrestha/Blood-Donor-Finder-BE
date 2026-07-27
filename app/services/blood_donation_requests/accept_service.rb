@@ -16,6 +16,8 @@ module BloodDonationRequests
 
         validate_donation_request!
 
+        validate_donor_eligibility!
+
         accept_current_request!
 
         update_blood_request!(blood_request)
@@ -39,6 +41,13 @@ module BloodDonationRequests
       unless blood_donation_request.status == "pending"
         raise StandardError,
               "Donation request has already been processed"
+      end
+    end
+
+    def validate_donor_eligibility!
+      unless blood_donation_request.donor_profile.available?
+        raise StandardError,
+              "You are not yet eligible to donate again."
       end
     end
 
