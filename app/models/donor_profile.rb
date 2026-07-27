@@ -12,8 +12,6 @@ class DonorProfile < ApplicationRecord
   validates :latitude, :longitude, presence: true
   validates :user_id, uniqueness: true
 
-  validate :eligible_for_donation
-
   scope :available, -> {
     where(
       "last_donated_at IS NULL OR last_donated_at <= ?",
@@ -36,18 +34,5 @@ class DonorProfile < ApplicationRecord
 
   def available
     available?
-  end
-
-  private
-
-  def eligible_for_donation
-    return if last_donated_at.blank?
-
-    if last_donated_at > DONATION_GAP.ago
-      errors.add(
-        :last_donated_at,
-        "Donor is not yet eligible to donate again"
-      )
-    end
   end
 end
