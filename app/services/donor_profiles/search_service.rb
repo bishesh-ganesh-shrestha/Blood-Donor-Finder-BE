@@ -32,6 +32,7 @@ module DonorProfiles
         <<~SQL,
           users.name ILIKE :query
           OR users.email ILIKE :query
+          OR users.phone_number ILIKE :query
           OR donor_profiles.location ILIKE :query
           OR donor_profiles.blood_group ILIKE :query
         SQL
