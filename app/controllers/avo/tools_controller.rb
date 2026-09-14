@@ -38,7 +38,7 @@ class Avo::ToolsController < Avo::ApplicationController
     # --- Stat cards ---
     @total_users        = User.count
     @total_donors       = DonorProfile.count
-    @available_donors   = DonorProfile.where(available: true).count
+    @available_donors   = DonorProfile.where("last_donated_at IS NULL OR last_donated_at <= ?", 120.days.ago).count
     @verified_donors    = DonorProfile.where(verified: true).count
     @total_requests     = requests_scope.count
     @pending_requests   = requests_scope.where(status: "pending").count
