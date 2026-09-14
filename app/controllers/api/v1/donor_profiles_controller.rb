@@ -75,6 +75,7 @@ class Api::V1::DonorProfilesController < ApplicationController
       :latitude,
       :longitude,
       :last_donated_at,
+      verification_documents: []
     )
   end
 
@@ -92,6 +93,15 @@ class Api::V1::DonorProfilesController < ApplicationController
           only: [ :id, :name, :email, :phone_number ]
         }
       }
+    ).merge(
+      verification_documents: donor_profile.verification_documents.map do |document|
+        {
+          id: document.id,
+          filename: document.filename.to_s,
+          content_type: document.content_type,
+          url: url_for(document)
+        }
+      end
     )
   end
 end

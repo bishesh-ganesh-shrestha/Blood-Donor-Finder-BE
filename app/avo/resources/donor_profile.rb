@@ -17,5 +17,6 @@ class Avo::Resources::DonorProfile < Avo::BaseResource
     field :last_active_at, as: :date_time
     field :user, as: :belongs_to
     field :blood_donation_requests, as: :has_many
+    field :verification_documents, as: :files
   end
 end

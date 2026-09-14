@@ -2,6 +2,7 @@ class DonorProfile < ApplicationRecord
   belongs_to :user
 
   has_many :blood_donation_requests, dependent: :destroy
+  has_many_attached :verification_documents
 
   BLOOD_GROUPS = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze
   DONATION_GAP = 120.days
