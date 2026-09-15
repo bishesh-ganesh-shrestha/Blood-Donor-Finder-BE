@@ -11,7 +11,7 @@ class DonorMatchingService
 
     donors = DonorProfile
                .includes(:user)
-               .where(blood_group: compatible_groups)
+               .where(blood_group: compatible_groups, verified: true)
                .select(&:available?)
 
     ranked_donors = donors.map do |donor|

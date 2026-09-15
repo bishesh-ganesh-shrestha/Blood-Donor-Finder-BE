@@ -2,16 +2,16 @@ class DonorPriorityService
   def self.calculate(donor:, distance:)
     score = 0
 
-    score += verification_score(donor)
+    # score += verification_score(donor)
     score += distance_score(distance)
     score += activity_score(donor)
 
     score
   end
 
-  def self.verification_score(donor)
-    donor.verified ? 30 : 0
-  end
+  # def self.verification_score(donor)
+  #   donor.verified ? 30 : 0
+  # end
 
   def self.distance_score(distance)
     case distance

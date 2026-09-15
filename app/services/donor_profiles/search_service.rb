@@ -12,6 +12,7 @@ module DonorProfiles
       donors = DonorProfile
                  .includes(:user)
                  .joins(:user)
+                 .where(verified: true)
 
       donors = search_by_query(donors)
       donors = filter_by_blood_group(donors)
