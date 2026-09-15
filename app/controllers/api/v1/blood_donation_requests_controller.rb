@@ -33,7 +33,10 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
         .blood_donation_requests
         .find(params[:id])
 
-    if update_params[:status] == "accepted"
+    attributes = update_params
+    status = attributes[:status]
+
+    if status == "accepted"
       BloodDonationRequests::AcceptService
         .new(donation_request)
         .call
@@ -42,7 +45,18 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
         message: "Donation request accepted",
         donation_request: donation_request.reload
       }, status: :ok
-    elsif donation_request.update(update_params)
+
+    elsif status == "declined"
+      donation_request.update!(status: "declined")
+
+      notify_blood_requester(donation_request)
+
+      render json: {
+        message: "Donation request declined",
+        donation_request: donation_request.reload
+      }, status: :ok
+
+    elsif donation_request.update(attributes)
       render json: {
         message: "Request updated",
         donation_request: donation_request
@@ -52,9 +66,15 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
         errors: donation_request.errors.full_messages
       }, status: :unprocessable_entity
     end
-  rescue StandardError => e
+
+  rescue ActiveRecord::RecordNotFound
     render json: {
-      error: e.message
+      error: "Donation request not found"
+    }, status: :not_found
+
+  rescue ActiveRecord::RecordInvalid => e
+    render json: {
+      errors: e.record.errors.full_messages
     }, status: :unprocessable_entity
   end
 
@@ -155,6 +175,15 @@ class Api::V1::BloodDonationRequestsController < ApplicationController
   def update_params
     params.require(:blood_donation_request).permit(
       :status
+    )
+  end
+
+  def notify_blood_requester(blood_donation_request)
+    Notifications::CreateService.call(
+      user: blood_donation_request.blood_request.user,
+      title: "Blood Donor Declined Your Request",
+      message: "Your blood request has been declined by #{blood_donation_request.donor_profile.user.name}.",
+      notifiable: blood_donation_request.blood_request
     )
   end
 end
