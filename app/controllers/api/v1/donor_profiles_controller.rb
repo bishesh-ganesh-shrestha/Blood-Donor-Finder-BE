@@ -29,7 +29,7 @@ class Api::V1::DonorProfilesController < ApplicationController
     )
 
     render json: {
-      donors: donor_profile_json(donors),
+      donors: donors.map { |donor| donor_profile_json(donor) },
       meta: {
         page: pagy.page,
         pages: pagy.pages,
